@@ -1,2 +1,2 @@
 # ProjetHotHotHot
-Projet Hot Hot Hot 🥵
+Projet Hot Hot Hot
