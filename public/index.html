@@ -3,52 +3,50 @@
     <head>
         <meta charset="utf-8">
         <meta name="viewport" content="width=device-width, initial-scale=1.0">
-        <title>Accueil - Mon site web</title>
+        <link rel="icon" href="assets/images/favicon.ico">
+        <title>HotHotHot | Accueil</title>
+        <link rel="stylesheet" href="css/tabs.css">
         <link rel="stylesheet" href="css/style.css">
     </head>
     <body>
         <header>
-            <h1>Accueil</h1>
+            <h1>Projet HotHotHot</h1>
+            <nav>
+                <ul>
+                    <li><a href="index.html">Accueil</a></li>
+                    <li><a href="documentation.html">Documentation du projet</a></li>
+                    <li><a href="logout.html">Déconnexion</a></li>
+                    <li><a href="about.html">Informations du compte</a></li>
+                </ul>
+            </nav>
         </header>
-        <nav>
-            <ul>
-                <li><a href="index.html">Accueil</a></li>
-                <li><a href="documentation.html">Documentation du projet</a></li>
-                <li><a href="logout.html">Déconnexion</a></li>
-                <li><a href="about.html">Informations du compte</a></li>
-            </ul>
-        </nav>
+        
         <main>
-            <section>
-                <h2>Bienvenue sur mon site web</h2>
-                <p>Ceci est la page d'accueil de mon site web. Vous pouvez trouver des  informations sur moi et mes projets ici.</p>
-            </section>
+            <div class="tabs">
+                <h3 id="tablist-1">Températures</h3>
+                <div role="tablist" aria-labelledby="tablist-1" class="manual">
+                    <button id="tab-1" type="button" role="tab" aria-selected="true" aria-controls="tabpanel-1">
+                        <span class="focus">Température actuelle</span>
+                    </button>
+                    <button id="tab-2" type="button" role="tab" aria-selected="false" aria-controls="tabpanel-2" tabindex="-1">
+                        <span class="focus">Historique des températures</span>
+                    </button>
+                </div>
+
+                <div id="tabpanel-1" role="tabpanel" aria-labelledby="tab-1">
+                    <p id="current-temp"></p>
+                </div>
+                <div id="tabpanel-2" role="tabpanel" aria-labelledby="tab-2" class="is-hidden">
+                    <p id="history-tab-text"></p>
+                </div>
+            </div>
         </main>
-
-        <div class="tabs">
-            <h3 id="tablist-1">Températures</h3>
-            <div role="tablist" aria-labelledby="tablist-1" class="manual">
-                <button id="tab-1" type="button" role="tab" aria-selected="true" aria-controls="tabpanel-1">
-                    <span class="focus">Température actuelle</span>
-                </button>
-                <button id="tab-2" type="button" role="tab" aria-selected="false" aria-controls="tabpanel-2" tabindex="-1">
-                    <span class="focus">Historique des températures</span>
-                </button>
-            </div>
-
-            <div id="tabpanel-1" role="tabpanel" aria-labelledby="tab-1">
-                <p id="current-temp"></p>
-            </div>
-            <div id="tabpanel-2" role="tabpanel" aria-labelledby="tab-2" class="is-hidden">
-                <p id="history-tab-text"></p>
-            </div>
-        </div>
 
         <script src="js/app.js"></script>
         <script src="js/temperature.js"></script>
 
         <footer>
-            <p>&copy; 2026 Mon site web. Tous droits réservés.</p>
+            <p>&copy; 2026 HotHotHot Website. Tous droits réservés.</p>
         </footer>
     </body>
 </html>
