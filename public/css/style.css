@@ -25,21 +25,12 @@ header h1 {
     font-size: 1.5rem;
 }
 
-<<<<<<< HEAD
-<<<<<<< HEAD
-=======
->>>>>>> 0354e06 (feat: Add logo image and update header to include logo container)
 header .logo-container img {
     max-height: 60px;
     width: auto;
     display: block;
 }
 
-<<<<<<< HEAD
-=======
->>>>>>> 6f9ffb8 (feat: Update navigation and tab structure, add favicon, and refine styles)
-=======
->>>>>>> 0354e06 (feat: Add logo image and update header to include logo container)
 header nav ul {
     list-style: none;
     /* Enlève les puces de base */
