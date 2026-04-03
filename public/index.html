@@ -29,23 +29,10 @@
       <section class="tabs">
         <h3 id="tablist-1">Températures</h3>
         <div role="tablist" aria-labelledby="tablist-1" class="manual">
-          <button
-            id="tab-1"
-            type="button"
-            role="tab"
-            aria-selected="true"
-            aria-controls="tabpanel-1"
-          >
+          <button id="tab-1" type="button" role="tab" aria-selected="true" aria-controls="tabpanel-1">
             <span class="focus">Température actuelle</span>
           </button>
-          <button
-            id="tab-2"
-            type="button"
-            role="tab"
-            aria-selected="false"
-            aria-controls="tabpanel-2"
-            tabindex="-1"
-          >
+          <button id="tab-2" type="button" role="tab" aria-selected="false" aria-controls="tabpanel-2" tabindex="-1">
             <span class="focus">Historique des températures</span>
           </button>
           <button id="install-pwa" style="display: none">
@@ -56,75 +43,44 @@
         <div id="tabpanel-1" role="tabpanel" aria-labelledby="tab-1">
           <p id="current-temp"></p>
         </div>
-        <div
-          id="tabpanel-2"
-          role="tabpanel"
-          aria-labelledby="tab-2"
-          class="is-hidden"
-        >
+        <div id="tabpanel-2" role="tabpanel" aria-labelledby="tab-2" class="is-hidden">
+          <h4 class="chart-title real-title">Données Réelles (Capteur)</h4>
+          <div class="chart-scroll-wrapper">
+            <div id="realChartBox" class="chart-box">
+              <canvas id="realChart"></canvas>
+            </div>
+          </div>
+
+          <hr class="chart-divider">
+
+          <h4 class="chart-title simulated-title">Données Simulées</h4>
           <div style="width: 100%; overflow-x: auto; overflow-y: hidden">
             <div id="chartBox" style="height: 300px; min-width: 100%">
               <canvas id="historyChart"></canvas>
             </div>
           </div>
+
           <ul id="history-tab-text"></ul>
         </div>
       </section>
+
+      <section id="stats">
+        <h3>Synthèse du jour</h3>
+        <p>Intérieur : Min <span id="min-int">--</span>°C / Max <span id="max-int">--</span>°C</p>
+        <p>Extérieur : Min <span id="min-ext">--</span>°C / Max <span id="max-ext">--</span>°C</p>
+      </section>
+
+      <dialog id="alert-modal">
+        <h2 id="alert-title">Alerte !</h2>
+        <p id="alert-message"></p>
+        <button onclick="document.getElementById('alert-modal').close()">Fermer</button>
+      </dialog>
+
+      <section id="past-alerts-section">
+        <button id="show-past-alerts">Voir les alertes passées</button>
+        <ul id="past-alerts-list"></ul>
+      </section>
     </main>
-
-
-        <main>
-            <section class="tabs">
-                <h3 id="tablist-1">Températures</h3>
-                <div role="tablist" aria-labelledby="tablist-1" class="manual">
-                    <button id="tab-1" type="button" role="tab" aria-selected="true" aria-controls="tabpanel-1">
-                        <span class="focus">Température actuelle</span>
-                    </button>
-                    <button id="tab-2" type="button" role="tab" aria-selected="false" aria-controls="tabpanel-2" tabindex="-1">
-                        <span class="focus">Historique des températures</span>
-                    </button>
-                </div>
-
-                <div id="tabpanel-1" role="tabpanel" aria-labelledby="tab-1">
-                    <p id="current-temp"></p>
-                </div>
-                <div id="tabpanel-2" role="tabpanel" aria-labelledby="tab-2">
-                    <h4 class="chart-title simulated-title">Données Simulées</h4>
-                    <div class="chart-scroll-wrapper with-margin">
-                        <div id="simChartBox" class="chart-box">
-                            <canvas id="simChart"></canvas>
-                        </div>
-                    </div>
-
-                    <hr class="chart-divider">
-
-                    <h4 class="chart-title real-title">Données Réelles (Capteur)</h4>
-                    <div class="chart-scroll-wrapper">
-                        <div id="realChartBox" class="chart-box">
-                            <canvas id="realChart"></canvas>
-                        </div>
-                    </div>
-
-                    <ul id="history-tab-text"></ul>
-                </div>
-            </section>
-            <section id="stats">
-                <h3>Synthèse du jour</h3>
-                <p>Intérieur : Min <span id="min-int">--</span>°C / Max <span id="max-int">--</span>°C</p>
-                <p>Extérieur : Min <span id="min-ext">--</span>°C / Max <span id="max-ext">--</span>°C</p>
-            </section>
-
-            <dialog id="alert-modal">
-                <h2 id="alert-title">Alerte !</h2>
-                <p id="alert-message"></p>
-                <button onclick="document.getElementById('alert-modal').close()">Fermer</button>
-            </dialog>
-
-            <section id="past-alerts-section">
-                <button id="show-past-alerts">Voir les alertes passées</button>
-                <ul id="past-alerts-list"></ul>
-            </section>
-        </main>
 
         <footer>
       <p>&copy; 2026 HotHotHot Website. Tous droits réservés.</p>

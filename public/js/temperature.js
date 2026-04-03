@@ -185,6 +185,11 @@ try {
     if (!isNaN(I_valReal)) {
       const S_timeLabel = new Date().toLocaleTimeString();
 
+      // Mise à jour de la température actuelle dans le premier onglet si nécessaire
+      if (O_pTab1) {
+        O_pTab1.innerHTML = `Réel : <strong>${I_valReal}°C</strong>`;
+      }
+
       // Mise à jour des statistiques et des alertes sur la VRAIE valeur
       updateStats("ext", I_valReal); // Par exemple on le considère comme capteur Extérieur
       checkAlerts("ext", I_valReal);
@@ -292,10 +297,8 @@ document.addEventListener("DOMContentLoaded", () => {
 
   // La grosse fonction qui met à jour l'affichage partout
   function updateInterface(I_value) {
-    if (!O_pTab1) return;
-    
-    // Affiche la température dans le gros carré
-    O_pTab1.textContent = `${I_value}°C`;
+    // Ne met pas à jour le gros carré ici (pour éviter les conflits avec le websocket)
+    // O_pTab1 géré séparément
 
     // Petit formatage de l'heure pour les labels
     const now = new Date();
