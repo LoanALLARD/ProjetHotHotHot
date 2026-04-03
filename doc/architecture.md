@@ -33,15 +33,15 @@ ProjetHotHotHot/
 ## Conventions de nommage et de séparation
 
 1. **Le dossier `public/` (Front-end)** :
-    - Contient l'intégralité de ce qui est distribué par le serveur web. Il agit comme la "racine" de ton site web. L'avantage est qu'il sépare complètement les fichiers de configuration du projet et le code du serveur du code visible par l'utilisateur.
+   - Contient l'intégralité de ce qui est distribué par le serveur web. Il agit comme la "racine" de ton site web. L'avantage est qu'il sépare complètement les fichiers de configuration du projet et le code du serveur du code visible par l'utilisateur.
 
 2. **Les Vues (`public/views/`)** :
-    - L'`index.html` vit à la racine de `public/` pour un accès direct.
-    - Les autres pages (connexion, à propos, documentation) sont rangées dans `views/` pour garder un répertoire principal propre. _Attention à bien adapter les chemins relatifs dans tes balises HTML (ex: `<script src="../js/app.js"></script>`)._
+   - L'`index.html` vit à la racine de `public/` pour un accès direct.
+   - Les autres pages (connexion, à propos, documentation) sont rangées dans `views/` pour garder un répertoire principal propre. _Attention à bien adapter les chemins relatifs dans tes balises HTML (ex: `<script src="../js/app.js"></script>`)._
 
 3. **La Logique UI et Réseau (`js/`)** :
-    - **`websocket.js`** : Maintient la connexion constante (WebSocket) et déclenche des événements métiers.
-    - **`app.js`** : Actualise ce qui est affiché à l'écran en fonction des événements venant du WebSocket.
+   - **`websocket.js`** : Maintient la connexion constante (WebSocket) et déclenche des événements métiers.
+   - **`app.js`** : Actualise ce qui est affiché à l'écran en fonction des événements venant du WebSocket.
 
 4. **Scripts de Lancement (`package.json`)** :
-    - Le serveur statique en mode développement pointera directement sur le sous-dossier `public/` pour l'héberger (ex : `npx http-server public/ ...`).
+   - Le serveur statique en mode développement pointera directement sur le sous-dossier `public/` pour l'héberger (ex : `npx http-server public/ ...`).
