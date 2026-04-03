@@ -41,7 +41,16 @@
         </div>
 
         <div id="tabpanel-1" role="tabpanel" aria-labelledby="tab-1">
-          <p id="current-temp"></p>
+          <div class="current-temp-container">
+            <div class="temp-box real-temp-box">
+              <h4>Capteur (Réel)</h4>
+              <p id="current-temp-real">--°C</p>
+            </div>
+            <div class="temp-box sim-temp-box">
+              <h4>Simulation</h4>
+              <p id="current-temp-sim">--°C</p>
+            </div>
+          </div>
         </div>
         <div id="tabpanel-2" role="tabpanel" aria-labelledby="tab-2" class="is-hidden">
           <h4 class="chart-title real-title">Données Réelles (Capteur)</h4>

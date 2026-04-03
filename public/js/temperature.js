@@ -138,8 +138,9 @@ function triggerAlert(S_message, S_type, I_value) {
     }
 }
 
-// Récupération de l'élément texte pour la température simulée
-let O_pTab1 = document.getElementById("current-temp");
+// Récupération des éléments texte pour la température
+let O_pTab1Sim = document.getElementById("current-temp-sim");
+let O_pTab1Real = document.getElementById("current-temp-real");
 
 // Boucle de simulation (Toutes les 5 secondes)
 setInterval(() => {
@@ -147,8 +148,8 @@ setInterval(() => {
     const S_timeLabel = new Date().toLocaleTimeString();
 
     // Mise à jour de l'affichage texte
-    if (O_pTab1) {
-        O_pTab1.innerHTML = `Simulation : <strong>${I_valSim}°C</strong>`;
+    if (O_pTab1Sim) {
+        O_pTab1Sim.innerHTML = `<strong>${I_valSim}°C</strong>`;
     }
 
     // Ajout au graphique simulé
@@ -187,8 +188,8 @@ try {
             const S_timeLabel = new Date().toLocaleTimeString();
 
             // Mise à jour de la température actuelle dans le premier onglet si nécessaire
-            if (O_pTab1) {
-                O_pTab1.innerHTML = `Réel : <strong>${I_valReal}°C</strong>`;
+            if (O_pTab1Real) {
+                O_pTab1Real.innerHTML = `<strong>${I_valReal}°C</strong>`;
             }
 
             // Mise à jour des statistiques et des alertes sur la VRAIE valeur
@@ -249,12 +250,12 @@ document.addEventListener("DOMContentLoaded", () => {
 // --- RÉINTÉGRATION DES FONCTIONNALITÉS PWA / HISTORIQUE SUITE AU MERGE ---
 document.addEventListener("DOMContentLoaded", () => {
     // On prend les éléments HTML dont on a besoin
-    const O_pTab1 = document.getElementById("current-temp");
+    const O_pTab1Sim = document.getElementById("current-temp-sim");
     const O_chartBox = document.getElementById("chartBox");
     const canvas = document.getElementById("historyChart");
 
     // Sécurité : si on n'est pas sur la bonne page, on arrête tout
-    if (!O_pTab1 || !canvas) return;
+    if (!O_pTab1Sim || !canvas) return;
 
     const ctx = canvas.getContext("2d");
 
@@ -299,7 +300,7 @@ document.addEventListener("DOMContentLoaded", () => {
     // La grosse fonction qui met à jour l'affichage partout
     function updateInterface(I_value) {
         // Ne met pas à jour le gros carré ici (pour éviter les conflits avec le websocket)
-        // O_pTab1 géré séparément
+        // O_pTab1Sim géré séparément
 
         // Petit formatage de l'heure pour les labels
         const now = new Date();
