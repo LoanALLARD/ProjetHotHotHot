@@ -145,3 +145,50 @@ footer {
     margin-top: 2rem;
 }
 
+/* --- Classes utilitaires --- */
+.is-hidden {
+    display: none !important;
+}
+
+/* =========================================================
+   STYLES DES GRAPHIQUES (Onglet Historique)
+   ========================================================= */
+
+/* Titres des graphiques */
+.chart-title {
+    text-align: center;
+    margin-top: 15px;
+    margin-bottom: 10px;
+}
+
+.simulated-title {
+    color: #555;
+}
+
+.real-title {
+    color: rgb(36, 116, 214); /* Bleu HotHotHot */
+}
+
+/* Conteneurs pour permettre le défilement horizontal (Scroll) */
+.chart-scroll-wrapper {
+    width: 100%;
+    overflow-x: auto;
+    overflow-y: hidden;
+}
+
+.chart-scroll-wrapper.with-margin {
+    margin-bottom: 30px;
+}
+
+/* Boîte contenant le Canvas Chart.js */
+.chart-box {
+    height: 250px;
+    min-width: 100%;
+}
+
+/* Séparateur entre les deux graphiques */
+.chart-divider {
+    border: 0;
+    border-top: 1px solid #ddd;
+    margin-bottom: 30px;
+}
