@@ -124,7 +124,7 @@ Situés entre l’application et le réseau, ils en interceptent les requêtes, 
 Ces services sont isolés, donc non bloquants, et dirigent diverses stratégies de mise en cache de l’application, en vue, par exemple, de son autonomie.
 
 Nous utiliserons, à la racine de notre site, un fichier contenant nos services workers.
-Appelons le sw.js. 
+Appelons le web-socket.js. 
 
 Ce fichier sera appelé par notre javascript au chargement de la page.
 
@@ -150,7 +150,7 @@ A l'installation, on stocke en cache les fichiers nécessaires.
 C'est le cas pour notre exemple :
 
 ``` js
-	//Dans /sw.js
+	//Dans /web-socket.js
 	
 	var CACHE = 'mysweetpwa1';  
   
@@ -165,7 +165,7 @@ C'est le cas pour notre exemple :
 				  "/assets/images/favicon-32x32.png",  
 				  "/assets/images/android-chrome-192x192.png",  
 				  "/assets/images/android-chrome-512x512.png",  
-				  "/sw.js",  
+				  "/web-socket.js",  
 		  ]);  
 	  }));  
 	});
