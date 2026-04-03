@@ -181,35 +181,97 @@ try {
 
     // Réception des messages du WebSocket
     O_socket.onmessage = function (O_event) {
-        // On tente de récupérer la valeur en tant que nombre
-        let I_valReal = parseFloat(O_event.data);
+        try {
+            // Lecture des données JSON
+            let O_data = JSON.parse(O_event.data);
 
-        if (!isNaN(I_valReal)) {
-            const S_timeLabel = new Date().toLocaleTimeString();
+            if (O_data.capteurs) {
+                const S_timeLabel = new Date().toLocaleTimeString();
 
-            // Mise à jour de la température actuelle dans le premier onglet si nécessaire
-            if (O_pTab1Real) {
-                O_pTab1Real.innerHTML = `<strong>${I_valReal}°C</strong>`;
+                O_data.capteurs.forEach((capteur) => {
+                    let I_valReal = parseFloat(capteur.Valeur);
+                    let S_nom = capteur.Nom; // "interieur" ou "exterieur"
+
+                    if (!isNaN(I_valReal)) {
+                        // Mise à jour de la température actuelle dans le premier onglet
+                        if (S_nom === "exterieur") {
+                            if (O_pTab1Real) {
+                                O_pTab1Real.innerHTML = `<strong>Ext: ${I_valReal}°C</strong>`;
+                            }
+                            updateStats("ext", I_valReal);
+                            checkAlerts("ext", I_valReal);
+
+                            // Ajout au graphique réel (on utilise l'extérieur par défaut pour le graphique)
+                            if (O_realChart) {
+                                O_realChart.data.labels.push(S_timeLabel);
+                                O_realChart.data.datasets[0].data.push(
+                                    I_valReal,
+                                );
+
+                                if (O_realChart.data.labels.length > 15) {
+                                    document.getElementById(
+                                        "realChartBox",
+                                    ).style.width =
+                                        O_realChart.data.labels.length * 40 +
+                                        "px";
+                                    const O_container =
+                                        document.getElementById(
+                                            "realChartBox",
+                                        ).parentElement;
+                                    O_container.scrollLeft =
+                                        O_container.scrollWidth;
+                                }
+                                O_realChart.update();
+                            }
+                        } else if (S_nom === "interieur") {
+                            // On pourrait aussi afficher l'intérieur, par exemple en l'ajoutant
+                            if (
+                                O_pTab1Real &&
+                                O_pTab1Real.innerHTML.includes("Ext:")
+                            ) {
+                                O_pTab1Real.innerHTML += `<br><strong>Int: ${I_valReal}°C</strong>`;
+                            } else if (O_pTab1Real) {
+                                O_pTab1Real.innerHTML = `<strong>Int: ${I_valReal}°C</strong>`;
+                            }
+                            updateStats("int", I_valReal);
+                            checkAlerts("int", I_valReal);
+                        }
+                    }
+                });
             }
+        } catch (e) {
+            // Si ce n'est pas du JSON, on tente de récupérer la valeur en tant que nombre
+            let I_valReal = parseFloat(O_event.data);
 
-            // Mise à jour des statistiques et des alertes sur la VRAIE valeur
-            updateStats("ext", I_valReal); // Par exemple on le considère comme capteur Extérieur
-            checkAlerts("ext", I_valReal);
+            if (!isNaN(I_valReal)) {
+                const S_timeLabel = new Date().toLocaleTimeString();
 
-            // Ajout au graphique réel
-            if (O_realChart) {
-                O_realChart.data.labels.push(S_timeLabel);
-                O_realChart.data.datasets[0].data.push(I_valReal);
-
-                // Ajuster dynamiquement la largeur du conteneur pour créer le scroll horizontal
-                if (O_realChart.data.labels.length > 15) {
-                    document.getElementById("realChartBox").style.width =
-                        O_realChart.data.labels.length * 40 + "px";
-                    const O_container =
-                        document.getElementById("realChartBox").parentElement;
-                    O_container.scrollLeft = O_container.scrollWidth;
+                // Mise à jour de la température actuelle dans le premier onglet si nécessaire
+                if (O_pTab1Real) {
+                    O_pTab1Real.innerHTML = `<strong>${I_valReal}°C</strong>`;
                 }
-                O_realChart.update();
+
+                // Mise à jour des statistiques et des alertes sur la VRAIE valeur
+                updateStats("ext", I_valReal); // Par exemple on le considère comme capteur Extérieur
+                checkAlerts("ext", I_valReal);
+
+                // Ajout au graphique réel
+                if (O_realChart) {
+                    O_realChart.data.labels.push(S_timeLabel);
+                    O_realChart.data.datasets[0].data.push(I_valReal);
+
+                    // Ajuster dynamiquement la largeur du conteneur pour créer le scroll horizontal
+                    if (O_realChart.data.labels.length > 15) {
+                        document.getElementById("realChartBox").style.width =
+                            O_realChart.data.labels.length * 40 + "px";
+                        const O_container =
+                            document.getElementById(
+                                "realChartBox",
+                            ).parentElement;
+                        O_container.scrollLeft = O_container.scrollWidth;
+                    }
+                    O_realChart.update();
+                }
             }
         }
     };
