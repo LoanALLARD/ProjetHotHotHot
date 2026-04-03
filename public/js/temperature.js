@@ -211,15 +211,6 @@ try {
                 }
                 O_realChart.update();
             }
-
-            // Affichage dans l'historique texte brut
-            let O_history = document.getElementById("history-tab-text");
-            if (O_history) {
-                let O_li = document.createElement("li");
-                O_li.textContent = `${S_timeLabel} - Réel: ${I_valReal}°C`;
-                O_history.appendChild(O_li);
-                O_history.scrollTop = O_history.scrollHeight; // Scroll automatique vers le bas
-            }
         }
     };
 } catch (O_e) {
@@ -326,21 +317,6 @@ document.addEventListener("DOMContentLoaded", () => {
             }
 
             historyChart.update();
-        }
-
-        // Ajout d'une ligne dans la liste textuelle de l'onglet Historique
-        let O_history = document.getElementById("history-tab-text");
-        if (!O_history) {
-            O_history = document.createElement("ul");
-            O_history.id = "history-tab-text";
-            const tabpanel2 = document.getElementById("tabpanel-2");
-            if (tabpanel2) tabpanel2.appendChild(O_history);
-        }
-        if (O_history) {
-            let O_li = document.createElement("li");
-            O_li.textContent = `${timeLabel} : ${I_value}°C`;
-            O_history.appendChild(O_li);
-            O_history.scrollTop = O_history.scrollHeight;
         }
 
         // Stratégie PWA : On sauvegarde la valeur pour le mode hors-ligne
