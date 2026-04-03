@@ -1,11 +1,9 @@
-
-
 # Les Progressive Web App
 
 ## Le meilleur des deux mondes (App & web)
 
-
 ### En résumé
+
 L’idée générale est d’exploiter les fonctionnalités fournies par les API issus des travaux autour de Html 5, pour réaliser des sites web pouvant se transformer en applications multiplateformes.
 
 La notion de progression est essentielle, toute part d’une page web et, en fond, des éléments, fonctionnalités, seront chargés en cache, permettant par la suite l’autonomie partielle ou complète de l’application.
@@ -14,7 +12,7 @@ La notion de progression est essentielle, toute part d’une page web et, en fon
 
 - Installable, avec bouton sur l’écran d’accueil,
 - ouverture et comportement comme une app (plein écran),
--  notifications,
+- notifications,
 - connecté / non connecté,
 - base de données locale
 - etc.
@@ -32,13 +30,13 @@ Pour que l’on puisse parler de PWA, il faut trois éléments :
 > Documentation :
 > https://developer.mozilla.org/fr/docs/Web/Progressive_web_apps
 
-
 > Que peuvent faire les PWA aujourd'hui ?
->  https://whatpwacando.today
+> https://whatpwacando.today
 
 ## Mise en oeuvre
 
 ### HTTPS
+
 Nous venons de le voir l’environnement doit être en HTTPS, aussi bien en local pour les développements qu’en production ensuite.
 
 Environnements de test, production : Voir doc d’installation pour Linux
@@ -61,13 +59,14 @@ Extrait du ReadMe :
 > When using Go 1.11 or newer you don't need a $GOPATH and can instead
 > do the following:
 
->`cd /ANY/PATH   git clone https://github.com/jsha/minica.git go build`  
->or  
->`go install`
+> `cd /ANY/PATH   git clone https://github.com/jsha/minica.git go build`  
+> or  
+> `go install`
 >
 > Example usage
 >
 > #### Generate a root key and cert in minica-key.pem, and minica.pem, then
+>
 > #### generate and sign an end-entity key and cert, storing them in ./foo.com/
 >
 > `$ minica --domains foo.com`
@@ -89,7 +88,8 @@ C’est un fichier au format JSON qui décrit certains éléments de l’applica
 Documentation : https://developer.mozilla.org/fr/docs/Web/Manifest
 
 Exemple
-```css 
+
+```css
 	{
 	   "lang":"fr",
 	   "dir":"ltr",
@@ -107,7 +107,8 @@ Exemple
 	   "start_url":"/",
 	   "display":"standalone"
 	}
-```	
+```
+
 Intégration :  
 Situé à la racine du site et intégré dans le head de notre page HTML
 
@@ -124,19 +125,18 @@ Situés entre l’application et le réseau, ils en interceptent les requêtes, 
 Ces services sont isolés, donc non bloquants, et dirigent diverses stratégies de mise en cache de l’application, en vue, par exemple, de son autonomie.
 
 Nous utiliserons, à la racine de notre site, un fichier contenant nos services workers.
-Appelons le web-socket.js. 
+Appelons le web-socket.js.
 
 Ce fichier sera appelé par notre javascript au chargement de la page.
 
 > Documentation :
 > https://developer.mozilla.org/fr/docs/Web/API/Service_Worker_API
-> 
+>
 > Rappel : Les promesses en javascript
 > https://developer.mozilla.org/fr/docs/Web/JavaScript/Guide/Utiliser_les_promesses
-> 
+>
 > Cookbook utilisé pour notre exemple :
 > https://github.com/mdn/serviceworker-cookbook
-
 
 #### Stratégies de cache
 
@@ -149,26 +149,26 @@ Pré chargement de données
 A l'installation, on stocke en cache les fichiers nécessaires.
 C'est le cas pour notre exemple :
 
-``` js
-	//Dans /web-socket.js
-	
-	var CACHE = 'mysweetpwa1';  
-  
-  
-  
-	// On install, cache some resource.  
-	self.addEventListener('install', function(evt) {  
-	  evt.waitUntil(caches.open(CACHE).then(function (cache) {  
-		        cache.addAll([  
-		          "/pwa.php",  
-				  "/assets/images/favicon-16x16.png",  
-				  "/assets/images/favicon-32x32.png",  
-				  "/assets/images/android-chrome-192x192.png",  
-				  "/assets/images/android-chrome-512x512.png",  
-				  "/web-socket.js",  
-		  ]);  
-	  }));  
-	});
+```js
+//Dans /web-socket.js
+
+var CACHE = "mysweetpwa1";
+
+// On install, cache some resource.
+self.addEventListener("install", function (evt) {
+  evt.waitUntil(
+    caches.open(CACHE).then(function (cache) {
+      cache.addAll([
+        "/pwa.php",
+        "/assets/images/favicon-16x16.png",
+        "/assets/images/favicon-32x32.png",
+        "/assets/images/android-chrome-192x192.png",
+        "/assets/images/android-chrome-512x512.png",
+        "/web-socket.js",
+      ]);
+    }),
+  );
+});
 ```
 
 Outre les stratégies telles que le **cache only** ou **network only**, assez facilement compréhensibles dans le concept, d'autres plus fines sont possibles.
@@ -177,7 +177,6 @@ Parmi elles :
 **Network first**
 
 Le service worker recherche d'abord la ressource sur le réseau, puis dans le cache si le réseau n'est pas accessible. Evidemment, une fois le réseau utilisé, cette ressource doit être mise en cache.
-
 
 **Cache first**
 
@@ -188,88 +187,83 @@ C'est l'inverse, on recherche d'abord la ressource dans le cache, puis via le r�
 Si la ressource est dans le cache, on l'utilise et, dans le même temps on rafraichit ce cache via le réseau pour la fois suivante.
 
 C'est cette dernière que nous utilisons pour notre exemple
+
 ```js
-	// On fetch, use cache but update the entry with the latest contents  
-	// from the server.  
-	self.addEventListener('fetch', function(evt) {  
-	    console.log('The service worker is serving the asset.');  
-	    // You can use `respondWith()` to answer ASAP...  
-	    evt.respondWith(fromCache(evt.request));  
-	    // ...and `waitUntil()` to prevent the worker to be killed until  
-	   // the cache is updated.
-	    evt.waitUntil(  
-	        update(evt.request)  
-	            // Finally, send a message to the client to inform it about the  
-			    // resource is up to date.
-			    .then(refresh)  
-	    );  
-	});  
-  
-	// Open the cache where the assets were stored and search for the requested  
-	// resource. Notice that in case of no matching, the promise still resolves  
-	// but it does with `undefined` as value.  
-	function fromCache(request) {  
-	    console.log('match cache request');  
-		return caches.open(CACHE).then(function (cache) {  
-	        return cache.match(request);  
-	   });  
-	}  
-  
-  
-	// Update consists in opening the cache, performing a network request and  
-	// storing the new response data.  
-	function update(request) {  
-	    console.log('update cache');  
-		return caches.open(CACHE).then(function (cache) {  
-	        return fetch(request).then(function (response) {  
-	            return cache.put(request, response.clone()).then(function () {  
-	                return response;  
-			    });  
-		   });  
-	  });  
-	}  
-  
-	// Sends a message to the clients.  
-	function refresh(response) {  
-  
-	    return self.clients.matchAll().then(function (clients) {  
-	        clients.forEach(function (client) {  
-            // Encode which resource has been updated. By including the  
-		    // [ETag](https://en.wikipedia.org/wiki/HTTP_ETag) the client can 
-		    // check if the content has changed. 
-		    
-			     var message = {  
-	                type: 'refresh',  
-					url: response.url,  
-					// Notice not all servers return the ETag header. If this is not  
-					// provided you should use other cache headers or rely on your own 
-					// means to check if the content has changed.
-				    eTag: response.headers.get('ETag')  
-	            };  
-				// Tell the client about the update.  
-			    client.postMessage(JSON.stringify(message));  
-		  });  
-	  });  
-	}
-	
-```	
+// On fetch, use cache but update the entry with the latest contents
+// from the server.
+self.addEventListener("fetch", function (evt) {
+  console.log("The service worker is serving the asset.");
+  // You can use `respondWith()` to answer ASAP...
+  evt.respondWith(fromCache(evt.request));
+  // ...and `waitUntil()` to prevent the worker to be killed until
+  // the cache is updated.
+  evt.waitUntil(
+    update(evt.request)
+      // Finally, send a message to the client to inform it about the
+      // resource is up to date.
+      .then(refresh),
+  );
+});
+
+// Open the cache where the assets were stored and search for the requested
+// resource. Notice that in case of no matching, the promise still resolves
+// but it does with `undefined` as value.
+function fromCache(request) {
+  console.log("match cache request");
+  return caches.open(CACHE).then(function (cache) {
+    return cache.match(request);
+  });
+}
+
+// Update consists in opening the cache, performing a network request and
+// storing the new response data.
+function update(request) {
+  console.log("update cache");
+  return caches.open(CACHE).then(function (cache) {
+    return fetch(request).then(function (response) {
+      return cache.put(request, response.clone()).then(function () {
+        return response;
+      });
+    });
+  });
+}
+
+// Sends a message to the clients.
+function refresh(response) {
+  return self.clients.matchAll().then(function (clients) {
+    clients.forEach(function (client) {
+      // Encode which resource has been updated. By including the
+      // [ETag](https://en.wikipedia.org/wiki/HTTP_ETag) the client can
+      // check if the content has changed.
+
+      var message = {
+        type: "refresh",
+        url: response.url,
+        // Notice not all servers return the ETag header. If this is not
+        // provided you should use other cache headers or rely on your own
+        // means to check if the content has changed.
+        eTag: response.headers.get("ETag"),
+      };
+      // Tell the client about the update.
+      client.postMessage(JSON.stringify(message));
+    });
+  });
+}
+```
 
 Plusieurs stratégies sont donc possibles, tout dépend du type de ressource, du contenu et des objectifs de votre application !then cache
 
 Cache, fallin back to network
 
-Cache  network race
+Cache network race
 
 Cache then network
 
-
-
-
 > Documentation Allons découvrir quelques recettes :
-> https://github.com/mozilla/serviceworker-cookbook 
-> 
+> https://github.com/mozilla/serviceworker-cookbook
+>
 > https://developer.mozilla.org/fr/docs/Web/API/Service_Worker_API/Using_Service_Workers
-> 
+>
 > Différentes stratégies :
 > https://jakearchibald.com/2014/offline-cookbook/
 
@@ -278,45 +272,42 @@ Cache then network
 Outre la gestion du cache que nous venons d’aborder, les services workers permettent également d’envoyer des notifications à nos utilisateurs, voire de pousser des données.
 
 Nous proposons à nos utilisateurs de s'abonner à nos notifications via un bouton.
+
 ```js
-	var button = document.getElementById("notifications");  
-	button.addEventListener('click', function(e) {  
-	    Notification.requestPermission().then(function(result) {  
-	        if(result === 'granted') {  
-	            randomNotification();  
-	  }  
-	    });  
-	});
+var button = document.getElementById("notifications");
+button.addEventListener("click", function (e) {
+  Notification.requestPermission().then(function (result) {
+    if (result === "granted") {
+      randomNotification();
+    }
+  });
+});
 ```
+
 Pour notre exemple, nous simulons une analyse de valeur et en fonction, créons une notification avec un message et une image.
 
 ```js
-	function randomNotification() {  
-    var randomNumber = getRandomInt(5);  
-	  console.log(randomNumber);  
-	 if(randomNumber >= 2) {  
-	  
-		 var notifTitle = "Chaud, non ?";  
-		 var notifBody = 'Température : ' + randomNumber + '.';  
-		 var notifImg = '/assets/images/android-chrome-192x192.png';  
-		 var options = {  
-		                body: notifBody,  
-		  icon: notifImg  
-		     }  
-		 var notif = new Notification(notifTitle, options);   
-		  }  
-		    setTimeout(randomNotification, 30000);  
-		}  
-	  
+function randomNotification() {
+  var randomNumber = getRandomInt(5);
+  console.log(randomNumber);
+  if (randomNumber >= 2) {
+    var notifTitle = "Chaud, non ?";
+    var notifBody = "Température : " + randomNumber + ".";
+    var notifImg = "/assets/images/android-chrome-192x192.png";
+    var options = {
+      body: notifBody,
+      icon: notifImg,
+    };
+    var notif = new Notification(notifTitle, options);
+  }
+  setTimeout(randomNotification, 30000);
+}
 
-
-	   //On génére un nombre aléatoire pour la démo  
-	  function getRandomInt(max) {  
-	    return Math.floor(Math.random() * Math.floor(max));  
-	  }
-
+//On génére un nombre aléatoire pour la démo
+function getRandomInt(max) {
+  return Math.floor(Math.random() * Math.floor(max));
+}
 ```
-
 
 ### Bouton d'installation
 
@@ -324,42 +315,42 @@ Enfin, tout cela serait moins pratique s’il n’était possible d’installer 
 
 Nous allons donc proposer aux utilisateurs d’effectuer cette installation en un clic !
 HTML :
-```html	
-	<button class="add-button">Ajouter</button>
+
+```html
+<button class="add-button">Ajouter</button>
 ```
 
 JavaScript
+
 ```js
+let deferredPrompt;
+const addBtn = document.querySelector(".add-button");
+addBtn.style.display = "none";
 
-	let deferredPrompt;  
-	const addBtn = document.querySelector('.add-button');  
-	addBtn.style.display = 'none';  
-  
-	window.addEventListener('beforeinstallprompt', (e) => {  
-	    // Prevent Chrome 67 and earlier from automatically showing the prompt  
-		  e.preventDefault();  
-		  // Stash the event so it can be triggered later.  
-		  deferredPrompt = e;  
-		  // Update UI to notify the user they can add to home screen  
-		  addBtn.style.display = 'block';  
-	  
-		  addBtn.addEventListener('click', (e) => {  
-		      // hide our user interface that shows our A2HS button  
-			  addBtn.style.display = 'none';  
-			  // Show the prompt  
-			  deferredPrompt.prompt();  
-			  // Wait for the user to respond to the prompt  
-			  deferredPrompt.userChoice.then((choiceResult) => {  
-		            if (choiceResult.outcome === 'accepted') {  
-		                console.log('User accepted the A2HS prompt');  
-				  } else {  
-		                console.log('User dismissed the A2HS prompt');  
-				  }  
-		          deferredPrompt = null;  
-			  });  
-	    });  
-	});
+window.addEventListener("beforeinstallprompt", (e) => {
+  // Prevent Chrome 67 and earlier from automatically showing the prompt
+  e.preventDefault();
+  // Stash the event so it can be triggered later.
+  deferredPrompt = e;
+  // Update UI to notify the user they can add to home screen
+  addBtn.style.display = "block";
 
+  addBtn.addEventListener("click", (e) => {
+    // hide our user interface that shows our A2HS button
+    addBtn.style.display = "none";
+    // Show the prompt
+    deferredPrompt.prompt();
+    // Wait for the user to respond to the prompt
+    deferredPrompt.userChoice.then((choiceResult) => {
+      if (choiceResult.outcome === "accepted") {
+        console.log("User accepted the A2HS prompt");
+      } else {
+        console.log("User dismissed the A2HS prompt");
+      }
+      deferredPrompt = null;
+    });
+  });
+});
 ```
 
 ### BONUS, les Websocket
@@ -382,38 +373,34 @@ Mais ce n'est pas le sujet pour nous, ce qui nous intéresse c'est ce qu'il se p
 	var socket = new WebSocket(‘wss: url du serveur:numéro de port');
 	socket.onopen = function(event) {
 		console.log("Connexion établie");
-		
+
 		//On indique sur notre page web que la connexion est établie
 		let label = document.getElementById("status");
-		label.innerHTML = "Connexion établie"; 
+		label.innerHTML = "Connexion établie";
 
 		//Envoi d'un message au serveur (obligatoire)
 		socket.send("coucou !");
-	
+
 		// au retour...
 		socket.onmessage = function(event) {
 			var datas = document.getElementById("datas");
-			datas.innerHTML = event.data; 
+			datas.innerHTML = event.data;
 		}
 	}
 ```
-C'est tout ! Notre élément d'id `datas`  recevra à intervalle régulier les données en provenance du service wss.
 
+C'est tout ! Notre élément d'id `datas` recevra à intervalle régulier les données en provenance du service wss.
 
 ## TD : A vous de jouer !
 
 1 Si vous utilisez votre machine personnelle, Installez un certificat pour un domaine local. Faites de même sur votre espace d'hébergement en ligne.
 
-2 Utilisez et analysez les sources  de cet exemple :
+2 Utilisez et analysez les sources de cet exemple :
 https://github.com/moinal/JavaScript-Exemples/tree/main/pwa
 Note : Utilisez Chrome pour une meilleure expérience.
 
 2 Pour accéder au serveur websocket, utilisez cette url :
 wss://ws.hothothot.dog:9502
-
-
-
-
 
 <!--stackedit_data:
 eyJoaXN0b3J5IjpbNjczMDQ4MDE0LC0zNzc0ODMyNDMsMjA0OT
