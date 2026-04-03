@@ -130,9 +130,22 @@ class TabsManual {
 
 // Initialize tablist
 
-window.addEventListener("load", function () {
-    var tablists = document.querySelectorAll("[role=tablist].manual");
-    for (var i = 0; i < tablists.length; i++) {
-        new TabsManual(tablists[i]);
-    }
+window.addEventListener('beforeinstallprompt', (e) => {
+  e.preventDefault();
+  deferredPrompt = e;
+  installBtn.style.display = 'block'; 
+});
+
+installBtn.addEventListener('click', () => {
+  if (deferredPrompt) {
+    deferredPrompt.prompt();
+    deferredPrompt.userChoice.then((choiceResult) => {
+      if (choiceResult.outcome === 'accepted') {
+        console.log('User accepted the A2HS prompt');
+      } else {
+        console.log('User dismissed the A2HS prompt');
+      }
+      deferredPrompt = null;
+    });
+  }
 });
