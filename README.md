@@ -1,11 +1,12 @@
 # ProjetHotHotHot
+
 Projet Hot Hot Hot
 
 ## Mise en place HTTPS
 
 > Se rendre dans ce site https://web.dev/articles/how-to-use-local-https?hl=fr
 
-1) **Installer ``mkcert`` (en fonction votre système d'exploitation)**
+1. **Installer `mkcert` (en fonction votre système d'exploitation)**
 
 ```bash
     # Pour mac
@@ -13,13 +14,13 @@ Projet Hot Hot Hot
     brew install nss # if you use Firefox
 ```
 
-2) **Ajoutez mkcert à vos autorités de certification racine locales**
+2. **Ajoutez mkcert à vos autorités de certification racine locales**
 
 ```bash
   mkcert -install
 ```
 
-3) **Générez un certificat pour votre site, signé par mkcert.**
+3. **Générez un certificat pour votre site, signé par mkcert.**
 
 Pour un nom de domaine personnalisé
 
@@ -34,7 +35,7 @@ La commande juste au-dessus a deux effets:
 
 Votre certificat est maintenant prêt et signé par une autorité de certification approuvée localement par votre navigateur.
 
-4) **Créer un fichier package.json**
+4. **Créer un fichier package.json**
 
 ```bash
     {
@@ -43,6 +44,7 @@ Votre certificat est maintenant prêt et signé par une autorité de certificati
         }
     }
 ```
+
 et tapez la commande suivante pour initialiser le fichier package.json
 
 ```bash

@@ -1,15 +1,7 @@
-/*
- *   This content is licensed according to the W3C Software License at
- *   https://www.w3.org/Consortium/Legal/2015/copyright-software-and-document
- *
- *   File:   tabs-manual.js
- *
- *   Desc:   Tablist widget that implements ARIA Authoring Practices
- */
-
 "use strict";
 
 class TabsManual {
+    // Constructeur
     constructor(groupNode) {
         this.tablistNode = groupNode;
 
@@ -21,6 +13,7 @@ class TabsManual {
         this.tabs = Array.from(this.tablistNode.querySelectorAll("[role=tab]"));
         this.tabpanels = [];
 
+        // Initialisation des tabs
         for (var i = 0; i < this.tabs.length; i += 1) {
             var tab = this.tabs[i];
             var tabpanel = document.getElementById(
@@ -43,6 +36,7 @@ class TabsManual {
         this.setSelectedTab(this.firstTab);
     }
 
+    // Sélectionne le tab actuel
     setSelectedTab(currentTab) {
         for (var i = 0; i < this.tabs.length; i += 1) {
             var tab = this.tabs[i];
@@ -58,10 +52,12 @@ class TabsManual {
         }
     }
 
+    // Tab actuel
     moveFocusToTab(currentTab) {
         currentTab.focus();
     }
 
+    // Déplacement au tab précédent
     moveFocusToPreviousTab(currentTab) {
         var index;
 
@@ -73,6 +69,7 @@ class TabsManual {
         }
     }
 
+    // Déplacement au tab suivant
     moveFocusToNextTab(currentTab) {
         var index;
 
@@ -84,8 +81,7 @@ class TabsManual {
         }
     }
 
-    /* EVENT HANDLERS */
-
+    // Handlers
     onKeydown(event) {
         var tgt = event.currentTarget,
             flag = false;
@@ -121,18 +117,37 @@ class TabsManual {
         }
     }
 
-    // Since this example uses buttons for the tabs, the click onr also is activated
-    // with the space and enter keys
     onClick(event) {
         this.setSelectedTab(event.currentTarget);
     }
 }
 
-// Initialize tablist
-
+// Initialisation du tablist
 window.addEventListener("load", function () {
     var tablists = document.querySelectorAll("[role=tablist].manual");
     for (var i = 0; i < tablists.length; i++) {
         new TabsManual(tablists[i]);
+    }
+});
+
+// Installation de l'application en tant que PWA
+window.addEventListener("beforeinstallprompt", (e) => {
+    e.preventDefault();
+    deferredPrompt = e;
+    installBtn.style.display = "block";
+});
+
+// Écouteur pour le bouton d'installation
+installBtn.addEventListener("click", () => {
+    if (deferredPrompt) {
+        deferredPrompt.prompt();
+        deferredPrompt.userChoice.then((choiceResult) => {
+            if (choiceResult.outcome === "accepted") {
+                console.log("User accepted the A2HS prompt");
+            } else {
+                console.log("User dismissed the A2HS prompt");
+            }
+            deferredPrompt = null;
+        });
     }
 });

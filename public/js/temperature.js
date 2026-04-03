@@ -1,106 +1,115 @@
-// Définition du tableau
-let A_temperatureValues = [];
+document.addEventListener("DOMContentLoaded", () => {
+  // On prend les éléments HTML dont on a besoin
+  const O_pTab1 = document.getElementById("current-temp");
+  const O_chartBox = document.getElementById("chartBox");
+  const canvas = document.getElementById("historyChart");
 
-// Génère 1 entier aléatoire compris entre 'min' et 'max'
-function random(min, max) {
-    const num = Math.floor(Math.random() * (max - min + 1)) + min;
-    return num;
-}
+  // Sécurité : si on n'est pas sur la bonne page, on arrête tout pour pas avoir d'erreurs
+  if (!O_pTab1 || !canvas) return;
 
-// Génère un nombre d'entiers 'iterations' dans A_temperatureValues
-function generateInts(iterations) {
-    for (let I_i = 0; I_i < iterations; ++I_i) {
-        A_temperatureValues[I_i] = random(-20, 40);
-        console.log(A_temperatureValues[I_i]);
-    }
-}
+  const ctx = canvas.getContext("2d");
 
-// Appel de la fonction
-generateInts(20);
-
-// Récupère un entier aléatoire dans un tableau 'array'
-function getRandomIntIntoArray(array) {
-    I_rand = random(0, 19);
-    return array[I_rand];
-}
-
-// Récupération et création des différents éléments
-let O_pTab1 = document.getElementById("current-temp");
-
-// Initialisation du graphique Chart.js
-const ctx = document.getElementById("historyChart").getContext("2d");
-const historyChart = new Chart(ctx, {
+  // Config de base de Chart.js pour le graphique en ligne
+  const historyChart = new Chart(ctx, {
     type: "line",
     data: {
-        labels: [],
-        datasets: [
-            {
-                label: "Historique des températures (°C)",
-                data: [],
-                borderColor: "rgba(255, 99, 132, 1)",
-                backgroundColor: "rgba(255, 99, 132, 0.2)",
-                borderWidth: 2,
-                tension: 0.3,
-                fill: true,
-            },
-        ],
+      labels: [],
+      datasets: [
+        {
+          label: "Historique des températures (°C)",
+          data: [],
+          borderColor: "rgba(255, 99, 132, 1)",
+          backgroundColor: "rgba(255, 99, 132, 0.2)",
+          borderWidth: 2,
+          tension: 0.3,
+          fill: true,
+        },
+      ],
     },
     options: {
-        responsive: true,
-        maintainAspectRatio: false,
-        scales: {
-            y: {
-                beginAtZero: false,
-                suggestedMin: -20,
-                suggestedMax: 40,
-            },
+      responsive: true,
+      maintainAspectRatio: false,
+      scales: {
+        y: {
+          beginAtZero: false,
+          suggestedMin: -20,
+          suggestedMax: 40,
         },
+      },
     },
-});
+  });
 
-let timeIndex = 0;
-
-// Change le contenu du <p> toutes les 2 secondes
-O_pTab1.textContent = ""; // Initialisation du contenu
-setInterval(() => {
-    let I_value = getRandomIntIntoArray(A_temperatureValues);
-
-    // Mise à jour de la température affichée dans le carré
+  // La grosse fonction qui met à jour l'affichage partout
+  function updateInterface(I_value) {
+    // Affiche la température dans le gros carré
     O_pTab1.textContent = `${I_value}°C`;
 
-    // Mise à jour du graphique Chart.js
+    // Petit formatage de l'heure pour les labels
     const now = new Date();
     const timeLabel =
-        now.getHours().toString().padStart(2, "0") +
-        ":" +
-        now.getMinutes().toString().padStart(2, "0") +
-        ":" +
-        now.getSeconds().toString().padStart(2, "0");
+      now.getHours().toString().padStart(2, "0") +
+      ":" +
+      now.getMinutes().toString().padStart(2, "0") +
+      ":" +
+      now.getSeconds().toString().padStart(2, "0");
 
+    // On ajoute les nouvelles infos dans le graphique
     historyChart.data.labels.push(timeLabel);
     historyChart.data.datasets[0].data.push(I_value);
 
-    // Ajuster dynamiquement la largeur du conteneur pour créer le scoll horizontal
+    // Si y'a trop de points, on agrandit la zone pour pouvoir scroller horizontalement
     if (historyChart.data.labels.length > 15) {
-        const newWidth = historyChart.data.labels.length * 40; // 40px par point
-        document.getElementById("chartBox").style.width = newWidth + "px";
+      const newWidth = historyChart.data.labels.length * 40;
+      if (O_chartBox) O_chartBox.style.width = newWidth + "px";
 
-        // Optionnel : defiler automatiquement le graphique vers la droite
-        const container = document.getElementById("chartBox").parentElement;
-        container.scrollLeft = container.scrollWidth;
+      const container = O_chartBox.parentElement;
+      if (container) container.scrollLeft = container.scrollWidth;
     }
 
     historyChart.update();
 
-    // Affichage de l'historique (ajout en bas de la liste)
+    // Ajout d'une ligne dans la liste textuelle de l'onglet Historique
     let O_history = document.getElementById("history-tab-text");
     if (!O_history) {
-        O_history = document.createElement("ul");
-        O_history.id = "history-tab-text";
-        document.getElementById("tabpanel-2").appendChild(O_history);
+      O_history = document.createElement("ul");
+      O_history.id = "history-tab-text";
+      document.getElementById("tabpanel-2").appendChild(O_history);
     }
     let O_li = document.createElement("li");
     O_li.textContent = `${timeLabel} : ${I_value}°C`;
     O_history.appendChild(O_li);
-    O_history.scrollTop = O_history.scrollHeight; // Scroll automatique vers le bas
-}, 2000);
+    O_history.scrollTop = O_history.scrollHeight;
+
+    // Stratégie PWA : On sauvegarde la valeur pour le mode hors-ligne
+    localStorage.setItem("lastTemperature", I_value);
+  }
+
+  // Check au démarrage : si on n'est pas en ligne, on charge la dernière valeur
+  if (!navigator.onLine) {
+    const savedData = localStorage.getItem("lastTemperature");
+    if (savedData) {
+      updateInterface(savedData);
+    }
+  }
+
+  // Simulateur de données : on génère des valeurs aléatoires pour tester l'interface
+  let A_temperatureValues = [];
+
+  function random(min, max) {
+    return Math.floor(Math.random() * (max - min + 1)) + min;
+  }
+
+  // On crée un petit stock de valeurs aléatoires
+  for (let i = 0; i < 20; i++) {
+    A_temperatureValues.push(random(-20, 40));
+  }
+
+  // On lance la boucle de mise à jour toutes les 2 secondes
+  setInterval(() => {
+    // On ne met à jour que si on est en ligne
+    if (navigator.onLine) {
+      let I_value = A_temperatureValues[random(0, 19)];
+      updateInterface(I_value);
+    }
+  }, 2000);
+});

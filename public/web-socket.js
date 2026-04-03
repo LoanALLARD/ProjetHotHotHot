@@ -1,55 +1,54 @@
 const wsUri = "wss://ws.hothothot.dog:9502";
 let websocket = null;
 let pingInterval;
-let counter = 0; // Counter to keep track of the number of pings sent and messages received.
+let counter = 0; // Compteur qui garde une trace du nombre de pings envoyés et de messages reçus.
 
 function initializeWebSocketListeners(ws) {
+  // Écoute les messages du serveur
+  ws.addEventListener("open", () => {
+    console.log("CONNECTED");
+    pingInterval = setInterval(() => {
+      console.log(`SENT: ping: ${counter}`);
+      ws.send("ping");
+    }, 1000);
+  });
 
-    // Listen for messages
-    ws.addEventListener("open", () => {
-        console.log("CONNECTED");
-        pingInterval = setInterval(() => {
-            console.log(`SENT: ping: ${counter}`);
-            ws.send("ping");
-        }, 1000);
-    });
+  // Écoute la fermeture de la connexion
+  ws.addEventListener("close", () => {
+    console.log("DISCONNECTED");
+    clearInterval(pingInterval);
+  });
 
-    // Listen for close
-    ws.addEventListener("close", () => {
-        console.log("DISCONNECTED");
-        clearInterval(pingInterval);
-    });
+  // Écoute les messages du serveur
+  ws.addEventListener("message", (e) => {
+    console.log(`RECEIVED: ${e.data}: ${counter}`);
+    counter++;
+  });
 
-    // Listen for messages
-    ws.addEventListener("message", (e) => {
-        console.log(`RECEIVED: ${e.data}: ${counter}`);
-        counter++;
-    });
-
-    // Listen for errors
-    ws.addEventListener("error", (e) => {
-        console.log(`ERROR`);
-    });
+  // Écoute les erreurs
+  ws.addEventListener("error", (e) => {
+    console.log(`ERROR`);
+  });
 }
 
-// Reconnect the websocket if the page is loaded from the bfcache (back-forward cache).
+// Reconnecte le websocket si la page est chargée à partir du cache de navigation
 window.addEventListener("pageshow", (event) => {
-    if (event.persisted) {
-        websocket = new WebSocket(wsUri);
-        initializeWebSocketListeners(websocket);
-    }
+  if (event.persisted) {
+    websocket = new WebSocket(wsUri);
+    initializeWebSocketListeners(websocket);
+  }
 });
 
 console.log("OPENING");
 websocket = new WebSocket(wsUri);
-initializeWebSocketListeners(websocket); // Open the websocket when the page loads.
+initializeWebSocketListeners(websocket); // Ouvre le websocket dès que la page est chargée
 
-// Close the websocket when the user leaves.
+// Ferme le websocket lorsque l'utilisateur quitte la page.
 window.addEventListener("pagehide", () => {
-    if (websocket) {
-        console.log("CLOSING");
-        websocket.close();
-        websocket = null;
-        window.clearInterval(pingInterval);
-    }
+  if (websocket) {
+    console.log("CLOSING");
+    websocket.close();
+    websocket = null;
+    window.clearInterval(pingInterval);
+  }
 });
