@@ -128,24 +128,46 @@ window.addEventListener("load", function () {
   }
 });
 
-// Installation de l'application en tant que PWA
+// Installation et service worker
+
+// Recuperation du bouton d'installation
+const installBtn = document.getElementById("install-pwa");
+let deferredPrompt = null;
+
+// Interception de l'évènement d'installation
 window.addEventListener("beforeinstallprompt", (e) => {
   e.preventDefault();
   deferredPrompt = e;
-  installBtn.style.display = "block";
+  if (installBtn) installBtn.style.display = "inline-block";
 });
 
 // Écouteur pour le bouton d'installation
-installBtn.addEventListener("click", () => {
-  if (deferredPrompt) {
-    deferredPrompt.prompt();
-    deferredPrompt.userChoice.then((choiceResult) => {
-      if (choiceResult.outcome === "accepted") {
-        console.log("User accepted the A2HS prompt");
-      } else {
-        console.log("User dismissed the A2HS prompt");
-      }
-      deferredPrompt = null;
-    });
-  }
-});
+if (installBtn) {
+  installBtn.addEventListener("click", () => {
+    if (deferredPrompt) {
+      deferredPrompt.prompt();
+      deferredPrompt.userChoice.then((choiceResult) => {
+        if (choiceResult.outcome === "accepted") {
+          console.log("User accepted the A2HS prompt");
+        } else {
+          console.log("User dismissed the A2HS prompt");
+        }
+        deferredPrompt = null;
+      });
+    }
+  });
+}
+
+// Enregistrement du service worker
+if ("serviceWorker" in navigator) {
+  window.addEventListener("load", () => {
+    navigator.serviceWorker
+      .register("/service-worker.js")
+      .then((registration) => {
+        console.log("Service worker enregistré avec succès :", registration.scope);
+      })
+      .catch((error) => {
+        console.error("Échec de l'enregistrement du service worker :", error);
+      });
+  });
+}
