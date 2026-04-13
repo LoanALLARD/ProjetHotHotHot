@@ -1,6 +1,6 @@
 {
   "scripts": {
-    "dev": "npx http-server -S -C ../PrivateKey/hothot.net+2.pem -K ../PrivateKey/hothot.net+2-key.pem"
+    "dev": "npx http-server -S -C localhost+2.pem -K localhost+2-key.pem"
   },
   "name": "projethothothot",
   "version": "1.0.0",
